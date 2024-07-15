@@ -1,0 +1,61 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Mano {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  carte       String?
+  puntata     Float?
+  giocatore   Giocatore? @relation(fields: [giocatoreId], references: [id])
+  giocatoreId String?
+  mossas      Mossa[]
+}
+
+model Partita {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  data      DateTime?
+  giocatori String?
+  vincitore String?
+}
+
+model Giocatore {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  nome      String?
+  saldo     Float?
+  manos     Mano[]
+  mossas    Mossa[]
+}
+
+model Mossa {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  azione      String?
+  mano        Mano?      @relation(fields: [manoId], references: [id])
+  manoId      String?
+  giocatore   Giocatore? @relation(fields: [giocatoreId], references: [id])
+  giocatoreId String?
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  username  String   @unique
+  email     String?  @unique
+  password  String
+  roles     Json
+}
